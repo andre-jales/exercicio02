@@ -2,18 +2,19 @@ package com.ti2cc;
 
 import java.sql.*;
 
-public class DAO {
+public class PessoaDAO {
 	private Connection conexao;
 	
-	public DAO() {
+	public PessoaDAO() {
 		conexao = null;
 	}
+	
 	
 	public boolean conectar() {
 		String driverName = "org.postgresql.Driver";
 		String serverName = "localhost";
-		String mydatabase = "teste";
-		int porta = 5433;
+		String mydatabase = "com.ti2cc";
+		int porta = 5432;
 		String url = "jdbc:postgresql://" + serverName + ":" + porta + "/" + mydatabase;
 		String username = "postgres";
 		String password = "postgres";
@@ -45,13 +46,13 @@ public class DAO {
 		return status;
 	}
 	
-	public boolean inserirUsuario(Usuario usuario) {
+	public boolean inserirPessoa(Pessoa pessoa) {
 		boolean status = false;
 		try {
 			Statement st = conexao.createStatement();
-			st.executeUpdate("INSERT INTO usuario (codigo, login, senha, sexo) "
-					       + "VALUES (" + usuario.getCodigo() + ", '" + usuario.getLogin() + "', '"
-					       + usuario.getSenha() + "', '" + usuario.getSexo() + "');");
+			st.executeUpdate("INSERT INTO pessoa (id, nome, idade, email) "
+					       + "VALUES (" + pessoa.getId() + ", '" + pessoa.getNome() + "', '"
+					       + pessoa.getIdade() + "', '" + pessoa.getEmail() + "');");
 			st.close();
 			status = true;
 		} catch (SQLException u) {
@@ -60,13 +61,13 @@ public class DAO {
 		return status;
 	}
 	
-	public boolean atualizarUsuario(Usuario usuario) {
+	public boolean atualizarPessoa(Pessoa pessoa) {
 		boolean status = false;
 		try {
 			Statement st = conexao.createStatement();
-			String sql = "UPDATE usuario SET login = '" + usuario.getLogin() + "', senha = '"
-					   +  usuario.getSenha() + "', sexo = '" + usuario.getSexo() + "'"
-					   +  " WHERE codigo = " + usuario.getCodigo();
+			String sql = "UPDATE pessoa SET nome = '" + pessoa.getNome() + "', idade = '"
+					   +  pessoa.getIdade() + "', email = '" + pessoa.getEmail() + "'"
+					   +  " WHERE id = " + pessoa.getId();
 			st.executeUpdate(sql);
 			st.close();
 			status = true;
@@ -76,11 +77,11 @@ public class DAO {
 		return status;
 	}
 	
-	public boolean excluirUsuario(int codigo) {
+	public boolean excluirPessoa(int id) {
 		boolean status = false;
 		try {
 			Statement st = conexao.createStatement();
-			st.executeUpdate("DELETE FROM usuario WHERE codigo = " + codigo);
+			st.executeUpdate("DELETE FROM pessoa WHERE id = " + id);
 			st.close();
 			status = true;
 		} catch (SQLException u) {
@@ -89,43 +90,43 @@ public class DAO {
 		return status;
 	}
 	
-	public Usuario[] getUsuarios() {
-		Usuario[] usuarios = null;
+	public Pessoa[] getPessoas() {
+		Pessoa[] pessoas = null;
 		
 		try {
 			Statement st = conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
-			ResultSet rs = st.executeQuery("SELECT * FROM usuario");
+			ResultSet rs = st.executeQuery("SELECT * FROM pessoa");
 				if(rs.next()) {
 					rs.last();
-					usuarios = new Usuario[rs.getRow()];
+					pessoas = new Pessoa[rs.getRow()];
 					rs.beforeFirst();
 					
 					for (int i = 0; rs.next(); i++) {
-						usuarios[i] = new Usuario(rs.getInt("codigo"), rs.getString("login"),
-								                  rs.getString("senha"), rs.getString("sexo").charAt(0));
+						pessoas[i] = new Pessoa(rs.getInt("id"), rs.getString("Nome"),
+								                rs.getInt("idade"), rs.getString("email"));
 					}
 				}
 				st.close();
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
-		return usuarios;
+		return pessoas;
 	}
 	
-	public Usuario getUsuarioByCodigo(int codigo) {
-	    Usuario usuario = null;
+	public Pessoa getPessoaById(int id) {
+	    Pessoa pessoa = null;
 	    
 	    try {
 	        Statement st = conexao.createStatement();
-	        ResultSet rs = st.executeQuery("SELECT * FROM usuario WHERE codigo = " + codigo);
+	        ResultSet rs = st.executeQuery("SELECT * FROM pessoa WHERE id = " + id);
 	        if (rs.next()) {
-	            usuario = new Usuario(rs.getInt("codigo"), rs.getString("login"),
-	                                   rs.getString("senha"), rs.getString("sexo").charAt(0));
+	            pessoa = new Pessoa(rs.getInt("id"), rs.getString("Nome"),
+		                            rs.getInt("idade"), rs.getString("email"));
 	        }
 	        st.close();
 	    } catch (Exception e) {
 	        System.err.println(e.getMessage());
 	    }
-	    return usuario;
+	    return pessoa;
 	}
 }

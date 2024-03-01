@@ -5,7 +5,7 @@ import java.util.*;
 public class Principal {
 
 	public static void main(String[] args) {
-		DAO dao = new DAO();
+		PessoaDAO dao = new PessoaDAO();
         dao.conectar();
 
         Scanner scanner = new Scanner(System.in);
@@ -24,60 +24,61 @@ public class Principal {
             switch (opcao) {
                 case 1:
                     System.out.println("\n=== Inserir ===");
-                    System.out.print("Digite o código: ");
-                    int codigo = scanner.nextInt();
+                    System.out.print("Digite o id: ");
+                    int id = scanner.nextInt();
                     scanner.nextLine();
-                    System.out.print("Digite o login: ");
-                    String login = scanner.nextLine();
-                    System.out.print("Digite a senha: ");
-                    String senha = scanner.nextLine();
-                    System.out.print("Digite o sexo: ");
-                    char sexo = scanner.nextLine().charAt(0);
+                    System.out.print("Digite o nome: ");
+                    String nome = scanner.nextLine();
+                    System.out.print("Digite a idade: ");
+                    int idade = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Digite o email: ");
+                    String email = scanner.nextLine();
 
-                    Usuario usuario = new Usuario(codigo, login, senha, sexo);
-                    if (dao.inserirUsuario(usuario)) {
-                        System.out.println("Inserção com sucesso: " + usuario);
+                    Pessoa pessoa = new Pessoa(id, nome, idade, email);
+                    if (dao.inserirPessoa(pessoa)) {
+                        System.out.println("Inserção com sucesso: " + pessoa);
                     } else {
-                        System.out.println("Erro ao inserir usuário.");
+                        System.out.println("Erro ao inserir pessoa.");
                     }
                     break;
                 case 2:
                     System.out.println("\n=== Listar ===");
-                    Usuario[] usuarios = dao.getUsuarios();
-                    for (Usuario u : usuarios) {
-                        System.out.println(u);
+                    Pessoa[] pessoas = dao.getPessoas();
+                    for (Pessoa p : pessoas) {
+                        System.out.println(p);
                     }
                     break;
                 case 3:
                     System.out.println("\n=== Atualizar ===");
-                    System.out.print("Digite o código do usuário a ser atualizado: ");
+                    System.out.print("Digite o id da pessoa a ser atualizada: ");
                     int codigoAtualizacao = scanner.nextInt();
                     scanner.nextLine();
                     
-                    Usuario usuarioAtualizar = dao.getUsuarioByCodigo(codigoAtualizacao);
+                    Pessoa pessoaAtualizar = dao.getPessoaById(codigoAtualizacao);
 
-                    if (usuarioAtualizar != null) {
-                        System.out.print("Digite a nova senha: ");
-                        String novaSenha = scanner.nextLine();
-                        usuarioAtualizar.setSenha(novaSenha);
+                    if (pessoaAtualizar != null) {
+                        System.out.print("Digite o novo email: ");
+                        String novoEmail = scanner.nextLine();
+                        pessoaAtualizar.setEmail(novoEmail);
 
-                        if (dao.atualizarUsuario(usuarioAtualizar)) {
+                        if (dao.atualizarPessoa(pessoaAtualizar)) {
                             System.out.println("Atualização realizada com sucesso.");
                         } else {
-                            System.out.println("Erro ao atualizar usuário.");
+                            System.out.println("Erro ao atualizar pessoa.");
                         }
                     } else {
-                        System.out.println("Usuário não encontrado.");
+                        System.out.println("Pessoa não encontrada.");
                     }
                     break;
                 case 4:
                     System.out.println("\n=== Excluir ===");
-                    System.out.print("Digite o código do usuário a ser excluído: ");
-                    int codigoExclusao = scanner.nextInt();
-                    if (dao.excluirUsuario(codigoExclusao)) {
-                        System.out.println("Usuário excluído com sucesso.");
+                    System.out.print("Digite o id da pessoa a ser excluída: ");
+                    int idExclusao = scanner.nextInt();
+                    if (dao.excluirPessoa(idExclusao)) {
+                        System.out.println("Pessoa excluído com sucesso.");
                     } else {
-                        System.out.println("Erro ao excluir usuário.");
+                        System.out.println("Erro ao excluir pessoa.");
                     }
                     break;
                 case 5:
